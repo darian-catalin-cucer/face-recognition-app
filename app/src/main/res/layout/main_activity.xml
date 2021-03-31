@@ -24,7 +24,10 @@
             android:clickable="true"
             android:longClickable="false"
             android:focusable="true"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            style="@style/WSB"/>
 
     <Button
             android:text="@string/AddFaceButton"
@@ -45,7 +48,10 @@
             android:clickable="true"
             android:checkable="false"
             android:focusable="true"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            style="@style/WSB"/>
 
     <TextView
             android:layout_width="wrap_content"

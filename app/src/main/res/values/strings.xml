@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Face Recognition</string>
-    <string name="AddFaceButton">Add new face</string>
+    <string name="AddFaceButton">Add new person</string>
     <string name="AuthenticationButton">Authenticate</string>
 </resources>
