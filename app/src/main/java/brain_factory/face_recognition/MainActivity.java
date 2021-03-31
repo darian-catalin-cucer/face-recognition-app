@@ -33,14 +33,14 @@ public class MainActivity extends AppCompatActivity
         {
             DebugMessage.setVisibility(View.VISIBLE);
             DebugMessage.setText("The AuthenticateButton button was clicked");
-            DebugMessage.postDelayed(() -> DebugMessage.setVisibility(View.GONE), 1500);
+            DebugMessage.postDelayed(() -> DebugMessage.setVisibility(View.GONE), 2000);
         });
 
         AddFaceButton.setOnClickListener((view) ->
         {
             DebugMessage.setVisibility(View.VISIBLE);
             DebugMessage.setText("The AddFaceButton button was clicked");
-            DebugMessage.postDelayed(() -> DebugMessage.setVisibility(View.GONE), 1500);
+            DebugMessage.postDelayed(() -> DebugMessage.setVisibility(View.GONE), 2000);
         });
     }
 }
