@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Face Recognition</string>
-    <string name="AddFaceButton">Add new person</string>
-    <string name="AuthenticationButton">Authenticate</string>
+    <string name="addFaceButton">Add new person</string>
+    <string name="authenticationButton">Authenticate</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email">E-mail</string>
+    <string name="phone">Phone number</string>
+    <string name="position">Position</string>
+    <string name="scanFace">Scan face</string>
+    <string name="addPerson">Add person</string>
 </resources>

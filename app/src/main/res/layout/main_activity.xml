@@ -7,7 +7,7 @@
         tools:context=".MainActivity">
 
     <Button
-            android:text="@string/AuthenticationButton"
+            android:text="@string/authenticationButton"
             android:layout_width="280dp"
             android:layout_height="150dp"
             android:textSize="20sp"
@@ -32,7 +32,7 @@
             android:backgroundTint="@color/red" />
 
     <Button
-            android:text="@string/AddFaceButton"
+            android:text="@string/addFaceButton"
             android:layout_width="280dp"
             android:layout_height="150dp"
             android:textSize="20sp"

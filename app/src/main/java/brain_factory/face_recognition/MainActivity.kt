@@ -29,7 +29,8 @@ class MainActivity : AppCompatActivity()
 
     private lateinit var currentPhotoPath: String
 
-    private var faceBounds: Rect = Rect(0, 0, 1500, 1500)
+    private var faceBounds: Rect = Rect(0, 0, 1944, 2592)
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -42,6 +43,10 @@ class MainActivity : AppCompatActivity()
         authenticateButton.setOnClickListener {
             dispatchTakePictureIntent()
         }
+
+        addFaceButton.setOnClickListener {
+            startActivity(Intent(this, AddNewPerson::class.java));
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?)
@@ -49,11 +54,11 @@ class MainActivity : AppCompatActivity()
         super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
-            val bitmapImage = ImageUtils.handleSamplingAndRotationBitmap(this, currentPhotoPath)
+            val bitmapImage = ImageUtils.handleSamplingAndRotationBitmap(currentPhotoPath)
             extractFace(bitmapImage)
             val faceNet = FaceNet(assets)
             val embeddings: FloatBuffer = faceNet.getEmbeddings(bitmapImage, faceBounds)
-            Log.d("[embeddings]", embeddings[0].toString()) // DEBUG
+            Log.d("[embeddings]", embeddings[0].toString() + " " + embeddings[1].toString() + " " + embeddings[2].toString()) // DEBUG
             faceNet.close()
 
             val displayIntent = Intent(this, ImageTest::class.java).apply {
@@ -86,16 +91,18 @@ class MainActivity : AppCompatActivity()
 
     private fun extractFace(imageBitmap: Bitmap)
     {
-        val options = FaceDetectorOptions.Builder().setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE).setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE).build()
+        val options = FaceDetectorOptions.Builder().setClassificationMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL).build()
+        val detector = FaceDetection.getClient(options)
 
         val image = InputImage.fromBitmap(imageBitmap, 0)
-        val detector = FaceDetection.getClient(options)
         detector.process(image).addOnSuccessListener { faces ->
             for (face in faces)
             {
                 faceBounds = face.boundingBox
             }
         }
+        Log.d("[embeddings]", faceBounds.toShortString()) // DEBUG
+        detector.close()
     }
 }
