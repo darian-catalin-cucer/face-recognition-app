@@ -29,8 +29,6 @@ class MainActivity : AppCompatActivity()
 
     private lateinit var currentPhotoPath: String
 
-    private var faceBounds: Rect = Rect(0, 0, 1944, 2592)
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -54,13 +52,8 @@ class MainActivity : AppCompatActivity()
         super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
-            val bitmapImage = ImageUtils.handleSamplingAndRotationBitmap(currentPhotoPath)
-            extractFace(bitmapImage)
-            val faceNet = FaceNet(assets)
-            val embeddings: FloatBuffer = faceNet.getEmbeddings(bitmapImage, faceBounds)
+            val embeddings: FloatBuffer = ImageProcess.getEmbeddings(currentPhotoPath, assets)
             Log.d("[embeddings]", embeddings[0].toString() + " " + embeddings[1].toString() + " " + embeddings[2].toString()) // DEBUG
-            faceNet.close()
-
             val displayIntent = Intent(this, ImageTest::class.java).apply {
                 putExtra("image_test", currentPhotoPath)
             }
@@ -72,7 +65,7 @@ class MainActivity : AppCompatActivity()
     {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply { currentPhotoPath = absolutePath }
+        return File.createTempFile("${timeStamp}_", ".jpg", storageDir).apply { currentPhotoPath = absolutePath }
     }
 
     private fun dispatchTakePictureIntent()
@@ -87,22 +80,5 @@ class MainActivity : AppCompatActivity()
                 }
             }
         }
-    }
-
-    private fun extractFace(imageBitmap: Bitmap)
-    {
-        val options = FaceDetectorOptions.Builder().setClassificationMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL).build()
-        val detector = FaceDetection.getClient(options)
-
-        val image = InputImage.fromBitmap(imageBitmap, 0)
-        detector.process(image).addOnSuccessListener { faces ->
-            for (face in faces)
-            {
-                faceBounds = face.boundingBox
-            }
-        }
-        Log.d("[embeddings]", faceBounds.toShortString()) // DEBUG
-        detector.close()
     }
 }
