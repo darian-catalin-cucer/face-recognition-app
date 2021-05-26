@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -15,30 +14,26 @@ import java.nio.FloatBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity()
+class AddNewPersonActivity : AppCompatActivity()
 {
     private val REQUEST_IMAGE_CAPTURE = 420
 
-    private lateinit var addFaceButton: Button
-    private lateinit var authenticateButton: Button
+    private lateinit var scanFaceButton: Button
+    private lateinit var addPersonButton: Button
 
     private lateinit var currentPhotoPath: String
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
+        setContentView(R.layout.activity_add_new_person)
         this.window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
-        addFaceButton = findViewById<View>(R.id.AddFaceButton) as Button
-        authenticateButton = findViewById<View>(R.id.AuthenticateButton) as Button
+        scanFaceButton = findViewById(R.id.scanFaceButton)
+        addPersonButton = findViewById(R.id.addPersonButton)
 
-        authenticateButton.setOnClickListener {
+        scanFaceButton.setOnClickListener {
             dispatchTakePictureIntent()
-        }
-
-        addFaceButton.setOnClickListener {
-            startActivity(Intent(this, AddNewPersonActivity::class.java));
         }
     }
 

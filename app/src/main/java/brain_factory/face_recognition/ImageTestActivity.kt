@@ -5,7 +5,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
-class ImageTest : AppCompatActivity()
+class ImageTestActivity : AppCompatActivity()
 {
     override fun onCreate(savedInstanceState: Bundle?)
     {

@@ -21,7 +21,7 @@ class ImageProcess
             val detector = FaceDetection.getClient(options)
 
             val image = InputImage.fromBitmap(imageBitmap, 0)
-            detector.process(image).addOnSuccessListener { faces ->
+            val result = detector.process(image).addOnSuccessListener { faces ->
                 for (face in faces)
                 {
                     resultFaceBounds = face.boundingBox
@@ -35,7 +35,7 @@ class ImageProcess
         fun getEmbeddings(currentPhotoPath: String, assetManager: AssetManager): FloatBuffer
         {
             val bitmapImage = ImageUtils.handleSamplingAndRotationBitmap(currentPhotoPath)
-            val faceBounds = ImageProcess.extractFace(bitmapImage)
+            val faceBounds = extractFace(bitmapImage)
             val faceNet = FaceNet(assetManager)
             val embeddings = faceNet.getEmbeddings(bitmapImage, faceBounds)
             faceNet.close()

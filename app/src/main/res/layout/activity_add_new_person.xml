@@ -4,7 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".AddNewPerson">
+        tools:context=".AddNewPersonActivity">
 
     <Button
             android:text="@string/addPerson"
@@ -44,7 +44,7 @@
             android:textAlignment="center"
             style="@style/WSB"
             android:hapticFeedbackEnabled="true"
-            android:backgroundTint="#99595858"
+            android:backgroundTint="#99A8A8A8"
             app:layout_constraintTop_toBottomOf="@+id/personPosition"
             android:layout_marginTop="60dp"
             app:layout_constraintStart_toStartOf="parent"
