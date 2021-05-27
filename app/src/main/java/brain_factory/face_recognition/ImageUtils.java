@@ -399,7 +399,7 @@ public class ImageUtils
     public static Bitmap handleSamplingAndRotationBitmap(String selectedImage) throws IOException
     {
         int MAX_HEIGHT = 2000;
-        int MAX_WIDTH = 2000;
+        int MAX_WIDTH = 1000;
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;

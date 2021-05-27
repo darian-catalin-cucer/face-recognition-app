@@ -15,28 +15,28 @@ class ImageProcess
     {
         private fun extractFace(imageBitmap: Bitmap): Rect
         {
-            var resultFaceBounds: Rect = Rect(0, 0, 1944, 2592)
+            var faceBounds = Rect(0, 0, 1944, 2592)
             val options = FaceDetectorOptions.Builder().setClassificationMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
                 .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL).build()
             val detector = FaceDetection.getClient(options)
 
             val image = InputImage.fromBitmap(imageBitmap, 0)
-            val result = detector.process(image).addOnSuccessListener { faces ->
+            detector.process(image).addOnSuccessListener { faces ->
                 for (face in faces)
                 {
-                    resultFaceBounds = face.boundingBox
+                    faceBounds = face.boundingBox
                 }
             }
-            Log.d("[embeddings]", resultFaceBounds.toShortString()) // DEBUG
             detector.close()
-            return resultFaceBounds
+            Log.d("[embeddings]", faceBounds.toShortString()) // DEBUG
+            return faceBounds
         }
 
         fun getEmbeddings(currentPhotoPath: String, assetManager: AssetManager): FloatBuffer
         {
+            val faceNet = FaceNet(assetManager)
             val bitmapImage = ImageUtils.handleSamplingAndRotationBitmap(currentPhotoPath)
             val faceBounds = extractFace(bitmapImage)
-            val faceNet = FaceNet(assetManager)
             val embeddings = faceNet.getEmbeddings(bitmapImage, faceBounds)
             faceNet.close()
             return embeddings
