@@ -9,14 +9,18 @@ import androidx.exifinterface.media.ExifInterface;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
+import io.realm.RealmList;
+
 /**
  * Utility class for manipulating images.
  **/
-public class ImageUtils
+public class Utils
 {
+    static final int EMBEDDING_SIZE = 512;
+
     // This value is 2 ^ 18 - 1, and is used to clamp the RGB values before their ranges
     // are normalized to eight bits.
-    static final int kMaxChannelValue = 262143;
+    static final int K_MAX_CHANNEL_VALUE = 262143;
     // Always prefer the native implementation if available.
     private static boolean useNativeConversion = true;
 
@@ -59,7 +63,7 @@ public class ImageUtils
         {
             try
             {
-                ImageUtils.convertYUV420SPToARGB8888(input, output, width, height, false);
+                Utils.convertYUV420SPToARGB8888(input, output, width, height, false);
                 return;
             }
             catch (UnsatisfiedLinkError e)
@@ -109,9 +113,9 @@ public class ImageUtils
         int b = (y1192 + 2066 * u);
 
         // Clipping RGB values to be inside boundaries [ 0 , kMaxChannelValue ]
-        r = r > kMaxChannelValue ? kMaxChannelValue : (Math.max(r, 0));
-        g = g > kMaxChannelValue ? kMaxChannelValue : (Math.max(g, 0));
-        b = b > kMaxChannelValue ? kMaxChannelValue : (Math.max(b, 0));
+        r = r > K_MAX_CHANNEL_VALUE ? K_MAX_CHANNEL_VALUE : (Math.max(r, 0));
+        g = g > K_MAX_CHANNEL_VALUE ? K_MAX_CHANNEL_VALUE : (Math.max(g, 0));
+        b = b > K_MAX_CHANNEL_VALUE ? K_MAX_CHANNEL_VALUE : (Math.max(b, 0));
 
         return 0xff000000 | ((r << 6) & 0xff0000) | ((g >> 2) & 0xff00) | ((b >> 10) & 0xff);
     }
@@ -302,7 +306,7 @@ public class ImageUtils
         {
             try
             {
-                ImageUtils.prewhiten(input, input.length, output);
+                Utils.prewhiten(input, input.length, output);
                 return;
             }
             catch (UnsatisfiedLinkError e)
@@ -408,5 +412,27 @@ public class ImageUtils
 
         img = rotateImageIfRequired(img, selectedImage);
         return img;
+    }
+
+    public static RealmList<Float> realmListFromFloatBuffer(FloatBuffer buffer)
+    {
+        RealmList<Float> result = new RealmList<>();
+        for (int i = 0; i < EMBEDDING_SIZE; ++i)
+        {
+            result.add(buffer.get(i));
+        }
+        return result;
+    }
+
+    public static double computeEuclideanDistance(FloatBuffer currentEmbedding, RealmList<Float> storedEmbedding)
+    {
+        double distance = 0;
+        double difference;
+        for (int i = 0; i < EMBEDDING_SIZE; ++i)
+        {
+            difference = currentEmbedding.get(i) - storedEmbedding.get(i);
+            distance += difference * difference;
+        }
+        return Math.sqrt(distance);
     }
 }

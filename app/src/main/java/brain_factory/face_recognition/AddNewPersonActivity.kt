@@ -3,8 +3,8 @@ package brain_factory.face_recognition
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
+import android.os.StrictMode
 import android.provider.MediaStore
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
@@ -38,7 +38,8 @@ class AddNewPersonActivity : AppCompatActivity()
     private lateinit var embeddings: FloatBuffer
 
     private lateinit var realmApp: App
-    private lateinit var backgroundThreadRealm: Realm
+    private lateinit var realmConfig: SyncConfiguration
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -63,39 +64,21 @@ class AddNewPersonActivity : AppCompatActivity()
             dispatchAddPersonInDatabase()
         }
 
-        Realm.init(this)
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
         realmApp = App(AppConfiguration.Builder("facerecognition-awxuy").build())
-
-        val apiKeyCredentials = Credentials.apiKey("eEvFzGCK1lRXLs0w2jq3u1JaJtG91dS1TF1FYGK5Vg9Bq9f94FOySHyksKO2fkhL")
-        realmApp.loginAsync(apiKeyCredentials) {
-            if (it.isSuccess)
-            {
-                Log.v("[AUTH]", "Successfully authenticated using an API Key.")
-                val config = SyncConfiguration.Builder(realmApp.currentUser(), "FaceRecognition")
-                    .allowQueriesOnUiThread(true).allowWritesOnUiThread(true).build()
-                backgroundThreadRealm = Realm.getInstance(config)
-            }
-            else
-            {
-                Log.e("[AUTH]", "Error logging in: ${it.error}")
-            }
-        }
+        val apiKeyCredentials: Credentials = Credentials.apiKey("99jrcLF8ZcCXxpaxe30lHPEW20L0sdeDy1sgXVZsnJmHCtLkjxrMwOHZPwZDLvhP")
+        realmApp.login(apiKeyCredentials)
+        realmConfig = SyncConfiguration.Builder(realmApp.currentUser(), "FaceRecognition")
+            .allowQueriesOnUiThread(true).allowWritesOnUiThread(true).build()
+        realm = Realm.getInstance(realmConfig)
     }
 
     override fun onDestroy()
     {
         super.onDestroy()
-        backgroundThreadRealm.close()
-        realmApp.currentUser()?.logOutAsync() {
-            if (it.isSuccess)
-            {
-                Log.v("[AUTH]", "Successfully logged out.")
-            }
-            else
-            {
-                Log.e("[AUTH]", "Failed to log out, error: ${it.error}")
-            }
-        }
+        realmApp.currentUser()?.logOut()
+        realm.close()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?)
@@ -134,6 +117,6 @@ class AddNewPersonActivity : AppCompatActivity()
             firstNameField.text.toString(), lastNameField.text.toString(), emailField.text.toString(), phoneField.text.toString(),
             positionField.text.toString(), embeddings
         )
-        backgroundThreadRealm.executeTransaction { realm -> realm.insert(person) }
+        realm.executeTransaction { realm -> realm.insert(person) }
     }
 }

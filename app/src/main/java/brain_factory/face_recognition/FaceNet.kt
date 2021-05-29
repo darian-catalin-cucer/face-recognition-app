@@ -51,6 +51,7 @@ class FaceNet(assetManager: AssetManager)
         try
         {
             interpreter = Interpreter(loadModelFile(assetManager)!!)
+            interpreter.setNumThreads(4)
         }
         catch (exp: Exception)
         {
@@ -77,7 +78,7 @@ class FaceNet(assetManager: AssetManager)
             rgbValues[i * 3 + 1] = (pixelValue shr 8 and 0xFF).toFloat()
             rgbValues[i * 3 + 0] = (pixelValue shr 16 and 0xFF).toFloat()
         }
-        ImageUtils.prewhiten(rgbValues, inputBuffer)
+        Utils.prewhiten(rgbValues, inputBuffer)
         outputBuffer.rewind()
         interpreter.run(inputBuffer, outputBuffer)
         outputBuffer.flip()

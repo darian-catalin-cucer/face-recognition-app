@@ -37,7 +37,7 @@ class ImageProcess
         fun getEmbeddings(currentPhotoPath: String, assetManager: AssetManager): FloatBuffer
         {
             val faceNet = FaceNet(assetManager)
-            val bitmapImage = ImageUtils.handleSamplingAndRotationBitmap(currentPhotoPath)
+            val bitmapImage = Utils.handleSamplingAndRotationBitmap(currentPhotoPath)
             val faceBounds = extractFace(bitmapImage)
             val embeddings = faceNet.getEmbeddings(bitmapImage, faceBounds)
             faceNet.close()

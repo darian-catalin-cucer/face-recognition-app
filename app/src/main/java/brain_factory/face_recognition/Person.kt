@@ -21,33 +21,25 @@ open class Person(
     var _id: ObjectId = ObjectId()
 
     @Required
-    var email: String = newEmail
-
-    @Required
-    var phone: String = newPhone
-
-    @Required
     var firstName: String = newFirstName
 
     @Required
     var lastName: String = newLastName
 
     @Required
+    var email: String = newEmail
+
+    @Required
+    var phone: String = newPhone
+
+    @Required
     var position: String = newPosition
 
     @Required
-    var embeddings: RealmList<Float> = floatBufferToRealmList(newEmbeddings)
+    var embeddings: RealmList<Float> = Utils.realmListFromFloatBuffer(newEmbeddings)
 
-    companion object
+    override fun toString(): String
     {
-        fun floatBufferToRealmList(buffer: FloatBuffer): RealmList<Float>
-        {
-            val result: RealmList<Float> = RealmList()
-            for (i in 0 .. 511)
-            {
-                result.add(buffer[i])
-            }
-            return result
-        }
+        return "$firstName $lastName: $email"
     }
 }
