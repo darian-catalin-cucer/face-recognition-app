@@ -7,8 +7,14 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import io.realm.Realm
+import io.realm.mongodb.App
+import io.realm.mongodb.AppConfiguration
+import io.realm.mongodb.Credentials
+import io.realm.mongodb.sync.SyncConfiguration
 import java.io.File
 import java.nio.FloatBuffer
 import java.text.SimpleDateFormat
@@ -21,7 +27,18 @@ class AddNewPersonActivity : AppCompatActivity()
     private lateinit var scanFaceButton: Button
     private lateinit var addPersonButton: Button
 
+    private lateinit var firstNameField: TextView
+    private lateinit var lastNameField: TextView
+    private lateinit var emailField: TextView
+    private lateinit var phoneField: TextView
+    private lateinit var positionField: TextView
+
     private lateinit var currentPhotoPath: String
+
+    private lateinit var embeddings: FloatBuffer
+
+    private lateinit var realmApp: App
+    private lateinit var backgroundThreadRealm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -32,8 +49,52 @@ class AddNewPersonActivity : AppCompatActivity()
         scanFaceButton = findViewById(R.id.scanFaceButton)
         addPersonButton = findViewById(R.id.addPersonButton)
 
+        firstNameField = findViewById(R.id.personFirstName)
+        lastNameField = findViewById(R.id.personLastName)
+        emailField = findViewById(R.id.personEmail)
+        phoneField = findViewById(R.id.personPhone)
+        positionField = findViewById(R.id.personPosition)
+
         scanFaceButton.setOnClickListener {
             dispatchTakePictureIntent()
+        }
+
+        addPersonButton.setOnClickListener {
+            dispatchAddPersonInDatabase()
+        }
+
+        Realm.init(this)
+        realmApp = App(AppConfiguration.Builder("facerecognition-awxuy").build())
+
+        val apiKeyCredentials = Credentials.apiKey("eEvFzGCK1lRXLs0w2jq3u1JaJtG91dS1TF1FYGK5Vg9Bq9f94FOySHyksKO2fkhL")
+        realmApp.loginAsync(apiKeyCredentials) {
+            if (it.isSuccess)
+            {
+                Log.v("[AUTH]", "Successfully authenticated using an API Key.")
+                val config = SyncConfiguration.Builder(realmApp.currentUser(), "FaceRecognition")
+                    .allowQueriesOnUiThread(true).allowWritesOnUiThread(true).build()
+                backgroundThreadRealm = Realm.getInstance(config)
+            }
+            else
+            {
+                Log.e("[AUTH]", "Error logging in: ${it.error}")
+            }
+        }
+    }
+
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        backgroundThreadRealm.close()
+        realmApp.currentUser()?.logOutAsync() {
+            if (it.isSuccess)
+            {
+                Log.v("[AUTH]", "Successfully logged out.")
+            }
+            else
+            {
+                Log.e("[AUTH]", "Failed to log out, error: ${it.error}")
+            }
         }
     }
 
@@ -42,12 +103,7 @@ class AddNewPersonActivity : AppCompatActivity()
         super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
-            val embeddings: FloatBuffer = ImageProcess.getEmbeddings(currentPhotoPath, assets)
-            Log.d("[embeddings]", embeddings[0].toString() + " " + embeddings[1].toString() + " " + embeddings[2].toString()) // DEBUG
-            val displayIntent = Intent(this, ImageTestActivity::class.java).apply {
-                putExtra("image_test", currentPhotoPath)
-            }
-            startActivity(displayIntent)
+            embeddings = ImageProcess.getEmbeddings(currentPhotoPath, assets)
         }
     }
 
@@ -70,5 +126,14 @@ class AddNewPersonActivity : AppCompatActivity()
                 }
             }
         }
+    }
+
+    private fun dispatchAddPersonInDatabase()
+    {
+        val person = Person(
+            firstNameField.text.toString(), lastNameField.text.toString(), emailField.text.toString(), phoneField.text.toString(),
+            positionField.text.toString(), embeddings
+        )
+        backgroundThreadRealm.executeTransaction { realm -> realm.insert(person) }
     }
 }

@@ -3,7 +3,6 @@ package brain_factory.face_recognition
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Rect
-import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
@@ -32,7 +31,6 @@ class ImageProcess
                 faceBounds = face.boundingBox
             }
             detector.close()
-            Log.d("[embeddings]", faceBounds.toShortString()) // DEBUG
             return faceBounds
         }
 

@@ -20,18 +20,23 @@ open class Person(
     @PrimaryKey
     var _id: ObjectId = ObjectId()
 
-    var embeddings: RealmList<Float> = floatBufferToRealmList(newEmbeddings)
-
     @Required
     var email: String = newEmail
+
     @Required
     var phone: String = newPhone
+
     @Required
     var firstName: String = newFirstName
+
     @Required
     var lastName: String = newLastName
+
     @Required
     var position: String = newPosition
+
+    @Required
+    var embeddings: RealmList<Float> = floatBufferToRealmList(newEmbeddings)
 
     companion object
     {
