@@ -1,15 +1,12 @@
 package brain_factory.face_recognition;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.net.Uri;
 
 import androidx.exifinterface.media.ExifInterface;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.FloatBuffer;
 
 /**
@@ -17,6 +14,12 @@ import java.nio.FloatBuffer;
  **/
 public class ImageUtils
 {
+    // This value is 2 ^ 18 - 1, and is used to clamp the RGB values before their ranges
+    // are normalized to eight bits.
+    static final int kMaxChannelValue = 262143;
+    // Always prefer the native implementation if available.
+    private static boolean useNativeConversion = true;
+
     static
     {
         try
@@ -45,13 +48,6 @@ public class ImageUtils
 
         return ySize + uvSize;
     }
-
-    // This value is 2 ^ 18 - 1, and is used to clamp the RGB values before their ranges
-    // are normalized to eight bits.
-    static final int kMaxChannelValue = 262143;
-
-    // Always prefer the native implementation if available.
-    private static boolean useNativeConversion = true;
 
     public static void convertYUV420SPToARGB8888(
             byte[] input,

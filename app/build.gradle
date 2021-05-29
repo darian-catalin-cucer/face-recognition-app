@@ -68,6 +68,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.6.0-beta01'
     implementation 'com.google.mlkit:face-detection:16.1.0'
     implementation 'com.google.android.gms:play-services-mlkit-face-detection:16.1.7'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.0-native-mt'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {

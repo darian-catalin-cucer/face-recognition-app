@@ -21,11 +21,15 @@ class ImageProcess
             val detector = FaceDetection.getClient(options)
 
             val image = InputImage.fromBitmap(imageBitmap, 0)
-            detector.process(image).addOnSuccessListener { faces ->
-                for (face in faces)
-                {
-                    faceBounds = face.boundingBox
-                }
+
+
+            val task = detector.process(image)
+            while (!task.isComplete)
+            {
+            }
+            for (face in task.result)
+            {
+                faceBounds = face.boundingBox
             }
             detector.close()
             Log.d("[embeddings]", faceBounds.toShortString()) // DEBUG
