@@ -66,6 +66,7 @@ class AddNewPersonActivity : AppCompatActivity()
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
+
         realmApp = App(AppConfiguration.Builder("facerecognition-awxuy").build())
         val apiKeyCredentials: Credentials = Credentials.apiKey("99jrcLF8ZcCXxpaxe30lHPEW20L0sdeDy1sgXVZsnJmHCtLkjxrMwOHZPwZDLvhP")
         realmApp.login(apiKeyCredentials)

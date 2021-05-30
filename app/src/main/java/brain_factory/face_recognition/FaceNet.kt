@@ -15,7 +15,6 @@ import java.nio.channels.FileChannel
 
 class FaceNet(assetManager: AssetManager)
 {
-
     private val MODEL_FILE = "facenet.tflite"
 
     private val EMBEDDING_SIZE = 512
@@ -33,7 +32,6 @@ class FaceNet(assetManager: AssetManager)
     private var bitmap: Bitmap
 
     private var interpreter: Interpreter
-
 
     @Throws(IOException::class)
     private fun loadModelFile(assets: AssetManager): ByteBuffer?

@@ -53,12 +53,13 @@ class MainActivity : AppCompatActivity()
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
+
         Realm.init(this)
         realmApp = App(AppConfiguration.Builder("facerecognition-awxuy").build())
         val anonymousCredentials = Credentials.anonymous()
         realmApp.login(anonymousCredentials)
-        realmConfig = SyncConfiguration.Builder(realmApp.currentUser(), "FaceRecognition")
-            .allowQueriesOnUiThread(true).allowWritesOnUiThread(true).build()
+        realmConfig =
+            SyncConfiguration.Builder(realmApp.currentUser(), "FaceRecognition").allowQueriesOnUiThread(true).allowWritesOnUiThread(true).build()
         realm = Realm.getInstance(realmConfig)
     }
 
@@ -92,8 +93,7 @@ class MainActivity : AppCompatActivity()
             if (finding.first)
             {
                 Log.d("[PERSON]", finding.second.toString())
-            }
-            else
+            } else
             {
                 Log.d("[PERSON]", "Person not found in database")
             }
@@ -141,5 +141,4 @@ class MainActivity : AppCompatActivity()
         }
         return result ?: Pair(false, Person())
     }
-
 }
